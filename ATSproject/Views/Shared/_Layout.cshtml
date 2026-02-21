@@ -3,124 +3,616 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - ATS_project</title>
+    <title>@ViewData["Title"] - ATS-Devotion Ventures</title>
     <script type="importmap"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/ATS_project.styles.css" asp-append-version="true" />
+
+    <style>
+        /* BASE */
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: #f0f4f8;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ── NAVBAR ── */
+        .ats-navbar {
+            background: #1e2a3a;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.18);
+        }
+            /* Colourful gradient underline */
+            .ats-navbar::after {
+                content: '';
+                display: block;
+                height: 3px;
+                background: linear-gradient(90deg, #4f8ef7 0%, #a855f7 33%, #14b8a6 66%, #f97316 100%);
+            }
+
+            .ats-navbar .container-fluid {
+                padding: 0 1.25rem;
+                min-height: 60px;
+                display: flex;
+                align-items: center;
+            }
+
+        /* ── Brand ── */
+        .ats-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            text-decoration: none;
+            flex-shrink: 0;
+            animation: brandPop 0.6s cubic-bezier(.34,1.56,.64,1) both;
+        }
+
+        .ats-brand-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 9px;
+            background: linear-gradient(135deg, #4f8ef7, #1a56db);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 1rem;
+            box-shadow: 0 4px 10px rgba(79,142,247,0.45);
+            flex-shrink: 0;
+        }
+
+        .ats-brand-name {
+            font-size: 0.97rem;
+            font-weight: 800;
+            color: #fff;
+            line-height: 1.15;
+        }
+
+        .ats-brand-sub {
+            font-size: 0.58rem;
+            font-weight: 600;
+            color: rgba(255,255,255,0.35);
+            text-transform: uppercase;
+            letter-spacing: 0.09em;
+            display: block;
+        }
+
+        @keyframes brandPop {
+            from {
+                opacity: 0;
+                transform: scale(0.7) rotate(-8deg);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1) rotate(0);
+            }
+        }
+
+        /* ── Toggler (mobile) ── */
+        .ats-toggler {
+            border: none;
+            background: rgba(255,255,255,0.09);
+            border-radius: 9px;
+            padding: 0.42rem 0.6rem;
+            color: #fff;
+            font-size: 1.25rem;
+            line-height: 1;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-left: auto;
+        }
+
+            .ats-toggler:hover {
+                background: rgba(255,255,255,0.17);
+            }
+
+            .ats-toggler:focus {
+                outline: none;
+                box-shadow: none;
+            }
+
+        /* ── Collapse wrapper ── */
+        .ats-collapse {
+            display: flex;
+            align-items: center;
+            flex: 1;
+            gap: 0.4rem;
+        }
+
+        /* ── Nav links ── */
+        .ats-nav {
+            display: flex;
+            align-items: center;
+            gap: 0.1rem;
+            flex-wrap: nowrap;
+        }
+
+        .ats-nav-link {
+            display: flex;
+            align-items: center;
+            gap: 0.42rem;
+            padding: 0.45rem 0.8rem;
+            border-radius: 9px;
+            color: rgba(255,255,255,0.52);
+            font-weight: 700;
+            font-size: 0.83rem;
+            text-decoration: none;
+            transition: all 0.2s;
+            white-space: nowrap;
+            opacity: 0;
+            animation: navFadeIn 0.4s ease forwards;
+        }
+
+            .ats-nav-link i {
+                font-size: 0.9rem;
+                flex-shrink: 0;
+            }
+
+            .ats-nav-link:hover {
+                background: rgba(255,255,255,0.10);
+                color: #fff;
+            }
+
+            /* Active — colour coded */
+            .ats-nav-link.active {
+                color: #fff;
+            }
+
+            .ats-nav-link.link-home.active {
+                background: rgba(79,142,247,0.22);
+                color: #93c5fd;
+            }
+
+            .ats-nav-link.link-admindash.active {
+                background: rgba(249,115,22,0.22);
+                color: #fdba74;
+            }
+
+            .ats-nav-link.link-companies.active {
+                background: rgba(79,142,247,0.22);
+                color: #93c5fd;
+            }
+
+            .ats-nav-link.link-users.active {
+                background: rgba(168,85,247,0.22);
+                color: #d8b4fe;
+            }
+
+            .ats-nav-link.link-jobs.active {
+                background: rgba(79,142,247,0.22);
+                color: #93c5fd;
+            }
+
+            .ats-nav-link.link-candidates.active {
+                background: rgba(168,85,247,0.22);
+                color: #d8b4fe;
+            }
+
+            .ats-nav-link.link-kanban.active {
+                background: rgba(20,184,166,0.22);
+                color: #5eead4;
+            }
+
+            .ats-nav-link.link-dashboard.active {
+                background: rgba(34,197,94,0.22);
+                color: #86efac;
+            }
+
+            /* Icon colour on hover */
+            .ats-nav-link.link-home:hover i {
+                color: #93c5fd;
+            }
+
+            .ats-nav-link.link-admindash:hover i {
+                color: #fdba74;
+            }
+
+            .ats-nav-link.link-companies:hover i {
+                color: #93c5fd;
+            }
+
+            .ats-nav-link.link-users:hover i {
+                color: #d8b4fe;
+            }
+
+            .ats-nav-link.link-jobs:hover i {
+                color: #93c5fd;
+            }
+
+            .ats-nav-link.link-candidates:hover i {
+                color: #d8b4fe;
+            }
+
+            .ats-nav-link.link-kanban:hover i {
+                color: #5eead4;
+            }
+
+            .ats-nav-link.link-dashboard:hover i {
+                color: #86efac;
+            }
+
+            /* Stagger */
+            .ats-nav-link:nth-child(1) {
+                animation-delay: 0.10s;
+            }
+
+            .ats-nav-link:nth-child(2) {
+                animation-delay: 0.16s;
+            }
+
+            .ats-nav-link:nth-child(3) {
+                animation-delay: 0.22s;
+            }
+
+            .ats-nav-link:nth-child(4) {
+                animation-delay: 0.28s;
+            }
+
+            .ats-nav-link:nth-child(5) {
+                animation-delay: 0.34s;
+            }
+
+            .ats-nav-link:nth-child(6) {
+                animation-delay: 0.40s;
+            }
+
+            .ats-nav-link:nth-child(7) {
+                animation-delay: 0.46s;
+            }
+
+        @keyframes navFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-6px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Vertical divider */
+        .ats-nav-divider {
+            width: 1px;
+            height: 18px;
+            background: rgba(255,255,255,0.12);
+            margin: 0 0.25rem;
+            flex-shrink: 0;
+        }
+
+        /* Right side */
+        .ats-nav-right {
+            display: flex;
+            align-items: center;
+            margin-left: auto;
+            gap: 0.4rem;
+        }
+
+        /* ── Login partial overrides ── */
+        .ats-navbar .nav-link,
+        .ats-navbar .navbar-nav .nav-link {
+            color: rgba(255,255,255,0.52) !important;
+            font-weight: 700;
+            font-size: 0.83rem;
+            padding: 0.45rem 0.8rem;
+            border-radius: 9px;
+            transition: all 0.2s;
+        }
+
+            .ats-navbar .nav-link:hover {
+                color: #fff !important;
+                background: rgba(255,255,255,0.10);
+            }
+
+        .ats-navbar .btn {
+            border-radius: 9px;
+            font-family: 'Nunito', sans-serif;
+            font-weight: 700;
+            font-size: 0.82rem;
+            padding: 0.38rem 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .ats-navbar .btn-outline-secondary,
+        .ats-navbar .btn-outline-danger {
+            border-color: rgba(255,255,255,0.2);
+            color: rgba(255,255,255,0.65);
+            background: transparent;
+        }
+
+            .ats-navbar .btn-outline-secondary:hover,
+            .ats-navbar .btn-outline-danger:hover {
+                border-color: #ef4444;
+                color: #fca5a5;
+                background: rgba(239,68,68,0.1);
+            }
+
+        .ats-navbar .btn-primary,
+        .ats-navbar .btn-outline-primary {
+            background: linear-gradient(135deg, #4f8ef7, #1a56db);
+            border: none;
+            color: #fff;
+        }
+
+            .ats-navbar .btn-primary:hover {
+                transform: translateY(-1px);
+                box-shadow: 0 4px 10px rgba(79,142,247,0.4);
+            }
+
+        /* ════════════════════════════════════════
+                   MOBILE COLLAPSE
+                ════════════════════════════════════════ */
+        @media (max-width: 991.98px) {
+            .ats-collapse {
+                display: none;
+                position: absolute;
+                top: 63px; /* 60px navbar + 3px gradient line */
+                left: 0;
+                right: 0;
+                background: #1e2a3a;
+                flex-direction: column;
+                align-items: stretch;
+                padding: 0.75rem 1rem 1rem;
+                gap: 0.15rem;
+                box-shadow: 0 8px 24px rgba(0,0,0,0.28);
+                border-top: 1px solid rgba(255,255,255,0.07);
+                z-index: 999;
+                animation: dropDown 0.22s ease;
+            }
+
+                .ats-collapse.open {
+                    display: flex;
+                }
+            @keyframes dropDown {
+                from {
+                    opacity: 0;
+                    transform: translateY(-8px);
+                }
+
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            .ats-nav {
+                flex-direction: column;
+                align-items: stretch;
+                width: 100%;
+                gap: 0.1rem;
+            }
+
+            .ats-nav-link {
+                padding: 0.65rem 0.9rem;
+                border-radius: 11px;
+                opacity: 1;
+                animation: none;
+            }
+
+            .ats-nav-divider {
+                width: 100%;
+                height: 1px;
+                margin: 0.4rem 0;
+            }
+
+            .ats-nav-right {
+                margin-left: 0;
+                width: 100%;
+                border-top: 1px solid rgba(255,255,255,0.08);
+                padding-top: 0.75rem;
+                margin-top: 0.3rem;
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0.3rem;
+            }
+
+                .ats-nav-right .nav-link,
+                .ats-nav-right .btn {
+                    width: 100%;
+                    justify-content: center;
+                }
+        }
+
+        /* ════════════════════════════════════════
+                   PAGE CONTENT & FOOTER
+                ════════════════════════════════════════ */
+        .page-content {
+            flex: 1;
+            padding: 1.8rem 0;
+        }
+
+        .page-footer {
+            background: #fff;
+            border-top: 1px solid #e2e8f0;
+            padding: 0.9rem 1.5rem;
+            font-size: 0.78rem;
+            color: #94a3b8;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+        }
+
+            .page-footer a {
+                color: #4f8ef7;
+                text-decoration: none;
+            }
+
+                .page-footer a:hover {
+                    text-decoration: underline;
+                }
+    </style>
 </head>
 <body>
+
     <header>
-        <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom mb-3">
+        <nav class="ats-navbar">
             <div class="container-fluid">
 
-                <a class="navbar-brand" asp-controller="Home" asp-action="Index">
-                    ATS_project
+                <!-- Brand -->
+                <a class="ats-brand" asp-controller="Home" asp-action="Index">
+                    <div class="ats-brand-icon"><i class="bi bi-briefcase-fill"></i></div>
+                    <div>
+                        <span class="ats-brand-name">ATS</span>
+                        <span class="ats-brand-sub">Devotion Ventures</span>
+                    </div>
                 </a>
 
-                <!-- Mobile Toggle Button -->
-                <button class="navbar-toggler" type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#navbarContent"
-                        aria-controls="navbarContent"
-                        aria-expanded="false"
-                        aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
+                <!-- Mobile toggler -->
+                <button class="ats-toggler d-lg-none" id="atsToggler" aria-label="Toggle navigation">
+                    <i class="bi bi-list" id="togglerIcon"></i>
                 </button>
 
-                <!-- Collapsible Content -->
-                <div class="collapse navbar-collapse" id="navbarContent">
+                <!-- Nav collapse -->
+                <div class="ats-collapse ms-3" id="atsCollapse">
 
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
+                    <div class="ats-nav">
 
                         @if (User.IsInRole("Admin"))
                         {
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Admin" asp-action="Dashboard">
-                                    Admin Dashboard
-                                </a>
-                            </li>
+                            <a class="ats-nav-link link-admindash"
+                               asp-controller="Admin" asp-action="Dashboard">
+                                <i class="bi bi-speedometer2"></i><span>Dashboard</span>
+                            </a>
 
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Accounts" asp-action="Index">
-                                    Companies
-                                </a>
-                            </li>
+                            <div class="ats-nav-divider"></div>
 
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Users" asp-action="Index">
-                                    Users
-                                </a>
-                            </li>
+                            <a class="ats-nav-link link-companies"
+                               asp-controller="Accounts" asp-action="Index">
+                                <i class="bi bi-building"></i><span>Companies</span>
+                            </a>
 
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Jobs" asp-action="Index">Jobs</a>
-                            </li>
+                            <a class="ats-nav-link link-users"
+                               asp-controller="Users" asp-action="Index">
+                                <i class="bi bi-people"></i><span>Users</span>
+                            </a>
 
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Candidates" asp-action="Index">Candidates</a>
-                            </li>
+                            <div class="ats-nav-divider"></div>
 
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Kanban" asp-action="Index">Kanban</a>
-                            </li>
+                            <a class="ats-nav-link link-jobs"
+                               asp-controller="Jobs" asp-action="Index">
+                                <i class="bi bi-briefcase"></i><span>Jobs</span>
+                            </a>
 
+                            <a class="ats-nav-link link-candidates"
+                               asp-controller="Candidates" asp-action="Index">
+                                <i class="bi bi-person-lines-fill"></i><span>Candidates</span>
+                            </a>
+
+                            <a class="ats-nav-link link-kanban"
+                               asp-controller="Kanban" asp-action="Index">
+                                <i class="bi bi-kanban"></i><span>Kanban</span>
+                            </a>
                         }
                         else if (User.IsInRole("Customer"))
                         {
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Customer" asp-action="Dashboard">
-                                    Dashboard
-                                </a>
-                            </li>
+                            <a class="ats-nav-link link-dashboard"
+                               asp-controller="Customer" asp-action="Dashboard">
+                                <i class="bi bi-house-heart"></i><span>Dashboard</span>
+                            </a>
 
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Jobs" asp-action="Index">
-                                    Jobs
-                                </a>
-                            </li>
+                            <div class="ats-nav-divider"></div>
 
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Candidates" asp-action="Index">Candidates</a>
-                            </li>
+                            <a class="ats-nav-link link-jobs"
+                               asp-controller="Jobs" asp-action="Index">
+                                <i class="bi bi-briefcase"></i><span>Jobs</span>
+                            </a>
 
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Kanban" asp-action="Index">Kanban</a>
-                            </li>
+                            <a class="ats-nav-link link-candidates"
+                               asp-controller="Candidates" asp-action="Index">
+                                <i class="bi bi-person-lines-fill"></i><span>Candidates</span>
+                            </a>
 
-
+                            <a class="ats-nav-link link-kanban"
+                               asp-controller="Kanban" asp-action="Index">
+                                <i class="bi bi-kanban"></i><span>Kanban</span>
+                            </a>
+                        }
+                        else
+                        {
+                            <a class="ats-nav-link link-home"
+                               asp-controller="Home" asp-action="Index">
+                                <i class="bi bi-house"></i><span>Home</span>
+                            </a>
                         }
 
-                    </ul>
+                    </div>
 
-                    <!-- Right Side (Login/Logout area already exists in template) -->
-                    <partial name="_LoginPartial" />
+                    <!-- Login/logout -->
+                    <div class="ats-nav-right">
+                        <partial name="_LoginPartial" />
+                    </div>
 
                 </div>
             </div>
         </nav>
-
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
+
+    <!-- Page content -->
+    <div class="page-content">
+        <div class="container">
+            <main role="main" class="pb-3">
+                @RenderBody()
+            </main>
+        </div>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - ATS_project - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
+    <!-- Footer -->
+    <footer class="page-footer">
+        <span>&copy; 2026 ATS-Devotion Ventures</span>
+        <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
     </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <script>
+        // Mobile toggle
+        const toggler  = document.getElementById('atsToggler');
+        const collapse = document.getElementById('atsCollapse');
+        const icon     = document.getElementById('togglerIcon');
+
+        if (toggler) {
+            toggler.addEventListener('click', () => {
+                const open = collapse.classList.toggle('open');
+                icon.className = open ? 'bi bi-x-lg' : 'bi bi-list';
+            });
+            document.addEventListener('click', (e) => {
+                if (!toggler.contains(e.target) && !collapse.contains(e.target)) {
+                    collapse.classList.remove('open');
+                    icon.className = 'bi bi-list';
+                }
+            });
+        }
+
+        // Active link
+        (function () {
+            const path = window.location.pathname.toLowerCase();
+            document.querySelectorAll('.ats-nav-link').forEach(link => {
+                const href = (link.getAttribute('href') || '').toLowerCase().split('?')[0];
+                if (href && href !== '/' && path.startsWith(href)) {
+                    link.classList.add('active');
+                }
+            });
+        })();
+    </script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

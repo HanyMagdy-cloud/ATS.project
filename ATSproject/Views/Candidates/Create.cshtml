@@ -15,10 +15,395 @@
     }
 }
 
-<div class="page-wrap">
-    <div class="container">
+<style>
+    /* ── Topbar ── */
+    .page-topbar {
+        height: 64px;
+        background: #fff;
+        border-bottom: 1px solid #e2e8f0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 2rem;
+        margin-bottom: 2rem;
+    }
 
-        <!-- Top bar -->
+    .page-title {
+        font-size: 1.15rem;
+        font-weight: 800;
+        color: #1e2a3a;
+    }
+
+    .page-right {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        font-size: 0.82rem;
+        color: #94a3b8;
+        font-weight: 600;
+    }
+
+    .avatar-circle {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #4f8ef7, #7c3aed);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-weight: 800;
+        font-size: 0.78rem;
+        letter-spacing: 0.5px;
+    }
+
+    /* ── Section Head ── */
+    .section-head {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        opacity: 0;
+        animation: fadeDown 0.5s 0.05s ease forwards;
+    }
+
+    .section-left {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .section-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 14px;
+        background: linear-gradient(135deg, #4f8ef7, #1a56db);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-size: 1.4rem;
+        box-shadow: 0 4px 12px rgba(79,142,247,0.3);
+    }
+
+    .section-h2 {
+        font-size: 1.4rem;
+        font-weight: 800;
+        color: #1e2a3a;
+        margin: 0;
+        line-height: 1.2;
+    }
+
+    .section-sub {
+        font-size: 0.82rem;
+        color: #94a3b8;
+        font-weight: 600;
+        margin-top: 2px;
+    }
+
+    .btn-back {
+        background: #fff;
+        color: #64748b;
+        border: 1.5px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 0.55rem 1.1rem;
+        font-family: inherit;
+        font-weight: 700;
+        font-size: 0.88rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        text-decoration: none;
+        transition: all 0.2s;
+    }
+
+        .btn-back:hover {
+            background: #f1f5f9;
+            color: #1e2a3a;
+            border-color: #cbd5e1;
+        }
+
+    /* ── Card ── */
+    .jobs-card {
+        border: none;
+        border-radius: 20px;
+        box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+        overflow: hidden;
+        background: #fff;
+        opacity: 0;
+        animation: fadeUp 0.6s 0.15s cubic-bezier(.34,1.56,.64,1) forwards;
+    }
+
+    .jobs-card-header {
+        background: linear-gradient(135deg, #4f8ef7 0%, #1a56db 100%);
+        padding: 1.2rem 1.6rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .jobs-card-header::before {
+            content: '';
+            position: absolute;
+            top: -28px;
+            right: -28px;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.10);
+        }
+
+        .jobs-card-header::after {
+            content: '';
+            position: absolute;
+            bottom: -20px;
+            left: -15px;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.07);
+        }
+
+    .jobs-title {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        color: #fff;
+        font-size: 1rem;
+        font-weight: 800;
+        z-index: 1;
+    }
+
+        .jobs-title i {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+    .jobs-badge {
+        background: rgba(255,255,255,0.2);
+        color: #fff;
+        font-size: 0.75rem;
+        font-weight: 800;
+        padding: 0.28em 0.85em;
+        border-radius: 20px;
+        letter-spacing: 0.06em;
+        z-index: 1;
+    }
+
+    /* ── Form ── */
+    .card-form-body {
+        padding: 2rem;
+    }
+
+    .form-section-label {
+        font-size: 0.72rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: #cbd5e1;
+        margin: 1.6rem 0 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+    }
+
+        .form-section-label:first-child {
+            margin-top: 0;
+        }
+
+        .form-section-label::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #f1f5f9;
+        }
+
+    .form-label-custom {
+        font-weight: 700;
+        font-size: 0.78rem;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+        margin-bottom: 0.45rem;
+        display: block;
+    }
+
+    .input-group-text-custom {
+        background: #f1f5f9;
+        border: 1.5px solid #e2e8f0;
+        border-right: none;
+        color: #4f8ef7;
+        font-size: 1rem;
+        padding: 0.55rem 0.85rem;
+        border-radius: 12px 0 0 12px;
+        display: flex;
+        align-items: center;
+    }
+
+    .form-control-styled {
+        border: 1.5px solid #e2e8f0;
+        border-left: none;
+        border-radius: 0 12px 12px 0 !important;
+        font-family: inherit;
+        font-size: 0.92rem;
+        font-weight: 600;
+        color: #1e2a3a;
+        padding: 0.55rem 0.9rem;
+        background: #f8fafc;
+        transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+    }
+
+        .form-control-styled:focus {
+            border-color: #4f8ef7;
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(79,142,247,0.12);
+            outline: none;
+        }
+
+    .form-select-styled {
+        border: 1.5px solid #e2e8f0;
+        border-left: none;
+        border-radius: 0 12px 12px 0 !important;
+        font-family: inherit;
+        font-size: 0.92rem;
+        font-weight: 600;
+        color: #1e2a3a;
+        padding: 0.55rem 0.9rem;
+        background: #f8fafc;
+        transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+        width: 100%;
+    }
+
+        .form-select-styled:focus {
+            border-color: #4f8ef7;
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(79,142,247,0.12);
+            outline: none;
+        }
+
+    .textarea-styled {
+        border: 1.5px solid #e2e8f0;
+        border-radius: 12px !important;
+        font-family: inherit;
+        font-size: 0.92rem;
+        font-weight: 600;
+        color: #1e2a3a;
+        padding: 0.7rem 0.9rem;
+        background: #f8fafc;
+        transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+        width: 100%;
+        resize: vertical;
+        min-height: 110px;
+    }
+
+        .textarea-styled:focus {
+            border-color: #4f8ef7;
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(79,142,247,0.12);
+            outline: none;
+        }
+
+    .input-group:focus-within .input-group-text-custom {
+        border-color: #4f8ef7;
+        background: #eff6ff;
+        color: #1a56db;
+    }
+
+    .field-hint {
+        font-size: 0.78rem;
+        color: #94a3b8;
+        font-weight: 600;
+        margin-top: 0.4rem;
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+
+    .form-divider {
+        border: none;
+        border-top: 1.5px solid #f1f5f9;
+        margin: 1.8rem 0 1.5rem;
+    }
+
+    /* ── Buttons ── */
+    .btn-save {
+        background: linear-gradient(135deg, #4f8ef7, #1a56db);
+        color: #fff;
+        border: none;
+        border-radius: 12px;
+        padding: 0.6rem 1.5rem;
+        font-family: inherit;
+        font-weight: 700;
+        font-size: 0.92rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        box-shadow: 0 4px 12px rgba(79,142,247,0.3);
+        transition: transform 0.2s cubic-bezier(.34,1.56,.64,1), box-shadow 0.2s;
+        cursor: pointer;
+    }
+
+        .btn-save:hover {
+            transform: translateY(-2px) scale(1.03);
+            box-shadow: 0 8px 20px rgba(79,142,247,0.4);
+            color: #fff;
+        }
+
+    .btn-cancel {
+        background: #fff;
+        color: #64748b;
+        border: 1.5px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 0.6rem 1.3rem;
+        font-family: inherit;
+        font-weight: 700;
+        font-size: 0.92rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        text-decoration: none;
+        transition: all 0.2s;
+    }
+
+        .btn-cancel:hover {
+            background: #f1f5f9;
+            color: #1e2a3a;
+            border-color: #cbd5e1;
+        }
+
+    @@keyframes fadeDown {
+        from {
+            opacity: 0;
+            transform: translateY(-12px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @@keyframes fadeUp {
+        from {
+            opacity: 0;
+            transform: translateY(24px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+
+<div class="page-wrap">
+    <div class="container pb-5">
+
+        <!-- Topbar -->
         <div class="page-topbar">
             <div class="page-title">Add Candidate</div>
             <div class="page-right">
@@ -27,25 +412,21 @@
             </div>
         </div>
 
-        <!-- Header -->
+        <!-- Section Head -->
         <div class="section-head">
             <div class="section-left">
-                <div class="section-icon">
-                    <i class="bi bi-person-plus"></i>
-                </div>
+                <div class="section-icon"><i class="bi bi-person-plus"></i></div>
                 <div>
                     <h2 class="section-h2">Add Candidate</h2>
-                    <div class="text-muted">Creates candidate (if new) + application (Applied stage).</div>
+                    <div class="section-sub">Creates candidate (if new) + application (Applied stage).</div>
                 </div>
             </div>
-
-            <a asp-action="Index" class="btn btn-outline-secondary">
-                <i class="bi bi-arrow-left"></i>
-                <span class="ms-1">Back</span>
+            <a asp-action="Index" class="btn-back">
+                <i class="bi bi-arrow-left"></i> Back
             </a>
         </div>
 
-        <!-- Form card -->
+        <!-- Card -->
         <div class="jobs-card">
             <div class="jobs-card-header">
                 <div class="jobs-title">
@@ -55,16 +436,17 @@
                 <div class="jobs-badge">Stage: Applied</div>
             </div>
 
-            <div class="p-3 p-md-4">
+            <div class="card-form-body">
                 <form asp-action="Create" method="post">
-                    <div asp-validation-summary="All" class="text-danger mb-3"></div>
+                    <div asp-validation-summary="All" class="text-danger mb-3" style="font-size:0.85rem; font-weight:600;"></div>
 
-                    <div class="row g-3">
-
-                        <!-- Job -->
-                        <div class="col-12">
-                            <label class="form-label">Job</label>
-                            <select asp-for="JobId" class="form-select" required>
+                    <!-- Position -->
+                    <div class="form-section-label">Position</div>
+                    <div class="mb-3">
+                        <label class="form-label-custom">Job</label>
+                        <div class="input-group">
+                            <span class="input-group-text-custom"><i class="bi bi-briefcase"></i></span>
+                            <select asp-for="JobId" class="form-select-styled" required>
                                 <option value="">-- Select Job --</option>
                                 @if (jobs != null)
                                 {
@@ -74,84 +456,83 @@
                                     }
                                 }
                             </select>
-                            <span asp-validation-for="JobId" class="text-danger"></span>
                         </div>
-
-                        <!-- First/Last -->
-                        <div class="col-12 col-lg-6">
-                            <label asp-for="FirstName" class="form-label"></label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bi bi-person"></i></span>
-                                <input asp-for="FirstName" class="form-control" placeholder="First name" />
-                            </div>
-                            <span asp-validation-for="FirstName" class="text-danger"></span>
-                        </div>
-
-                        <div class="col-12 col-lg-6">
-                            <label asp-for="LastName" class="form-label"></label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bi bi-person"></i></span>
-                                <input asp-for="LastName" class="form-control" placeholder="Last name" />
-                            </div>
-                            <span asp-validation-for="LastName" class="text-danger"></span>
-                        </div>
-
-                        <!-- Email -->
-                        <div class="col-12 col-lg-6">
-                            <label asp-for="Email" class="form-label"></label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bi bi-envelope"></i></span>
-                                <input asp-for="Email" class="form-control" placeholder="candidate@email.com" autocomplete="email" />
-                            </div>
-                            <span asp-validation-for="Email" class="text-danger"></span>
-                        </div>
-
-                        <!-- Phone -->
-                        <div class="col-12 col-lg-6">
-                            <label asp-for="Phone" class="form-label"></label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bi bi-telephone"></i></span>
-                                <input asp-for="Phone" class="form-control" placeholder="+20..." />
-                            </div>
-                            <span asp-validation-for="Phone" class="text-danger"></span>
-                        </div>
-
-                        <!-- LinkedIn -->
-                        <div class="col-12">
-                            <label asp-for="LinkedInUrl" class="form-label">LinkedIn URL</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bi bi-linkedin"></i></span>
-                                <input asp-for="LinkedInUrl" class="form-control" placeholder="https://linkedin.com/in/..." />
-                            </div>
-                            <span asp-validation-for="LinkedInUrl" class="text-danger"></span>
-                            <div class="form-text">Optional — helps you quickly review candidate profile.</div>
-                        </div>
-
-                        <!-- Notes -->
-                        <div class="col-12">
-                            <label asp-for="Notes" class="form-label"></label>
-                            <textarea asp-for="Notes" class="form-control" rows="4" placeholder="Notes about the candidate..."></textarea>
-                            <span asp-validation-for="Notes" class="text-danger"></span>
-                        </div>
-
-                        <!-- Buttons -->
-                        <div class="col-12 mt-2">
-                            <div class="row g-2">
-                                <div class="col-12 col-sm-6 col-lg-3 d-grid">
-                                    <button type="submit" class="btn btn-primary">
-                                        <i class="bi bi-save"></i>
-                                        <span class="ms-1">Save</span>
-                                    </button>
-                                </div>
-                                <div class="col-12 col-sm-6 col-lg-3 d-grid">
-                                    <a asp-action="Index" class="btn btn-outline-secondary">
-                                        Cancel
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-
+                        <span asp-validation-for="JobId" class="text-danger" style="font-size:0.8rem; font-weight:600;"></span>
                     </div>
+
+                    <!-- Personal Details -->
+                    <div class="form-section-label">Personal Details</div>
+                    <div class="row g-3 mb-3">
+                        <div class="col-12 col-lg-6">
+                            <label asp-for="FirstName" class="form-label-custom"></label>
+                            <div class="input-group">
+                                <span class="input-group-text-custom"><i class="bi bi-person"></i></span>
+                                <input asp-for="FirstName" class="form-control form-control-styled" placeholder="First name" />
+                            </div>
+                            <span asp-validation-for="FirstName" class="text-danger" style="font-size:0.8rem; font-weight:600;"></span>
+                        </div>
+                        <div class="col-12 col-lg-6">
+                            <label asp-for="LastName" class="form-label-custom"></label>
+                            <div class="input-group">
+                                <span class="input-group-text-custom"><i class="bi bi-person"></i></span>
+                                <input asp-for="LastName" class="form-control form-control-styled" placeholder="Last name" />
+                            </div>
+                            <span asp-validation-for="LastName" class="text-danger" style="font-size:0.8rem; font-weight:600;"></span>
+                        </div>
+                    </div>
+
+                    <!-- Contact -->
+                    <div class="form-section-label">Contact</div>
+                    <div class="row g-3 mb-3">
+                        <div class="col-12 col-lg-6">
+                            <label asp-for="Email" class="form-label-custom"></label>
+                            <div class="input-group">
+                                <span class="input-group-text-custom"><i class="bi bi-envelope"></i></span>
+                                <input asp-for="Email" class="form-control form-control-styled" placeholder="candidate@email.com" autocomplete="email" />
+                            </div>
+                            <span asp-validation-for="Email" class="text-danger" style="font-size:0.8rem; font-weight:600;"></span>
+                        </div>
+                        <div class="col-12 col-lg-6">
+                            <label asp-for="Phone" class="form-label-custom"></label>
+                            <div class="input-group">
+                                <span class="input-group-text-custom"><i class="bi bi-telephone"></i></span>
+                                <input asp-for="Phone" class="form-control form-control-styled" placeholder="+20..." />
+                            </div>
+                            <span asp-validation-for="Phone" class="text-danger" style="font-size:0.8rem; font-weight:600;"></span>
+                        </div>
+                        <div class="col-12">
+                            <label asp-for="LinkedInUrl" class="form-label-custom">LinkedIn URL</label>
+                            <div class="input-group">
+                                <span class="input-group-text-custom"><i class="bi bi-linkedin"></i></span>
+                                <input asp-for="LinkedInUrl" class="form-control form-control-styled" placeholder="https://linkedin.com/in/..." />
+                            </div>
+                            <div class="field-hint">
+                                <i class="bi bi-info-circle"></i>
+                                Optional — helps you quickly review candidate profile.
+                            </div>
+                            <span asp-validation-for="LinkedInUrl" class="text-danger" style="font-size:0.8rem; font-weight:600;"></span>
+                        </div>
+                    </div>
+
+                    <!-- Notes -->
+                    <div class="form-section-label">Notes</div>
+                    <div class="mb-3">
+                        <label asp-for="Notes" class="form-label-custom"></label>
+                        <textarea asp-for="Notes" class="textarea-styled" rows="4" placeholder="Notes about the candidate..."></textarea>
+                        <span asp-validation-for="Notes" class="text-danger" style="font-size:0.8rem; font-weight:600;"></span>
+                    </div>
+
+                    <hr class="form-divider">
+
+                    <div class="d-flex gap-2 flex-wrap">
+                        <button type="submit" class="btn-save">
+                            <i class="bi bi-save"></i> Save
+                        </button>
+                        <a asp-action="Index" class="btn-cancel">
+                            <i class="bi bi-x"></i> Cancel
+                        </a>
+                    </div>
+
                 </form>
             </div>
         </div>

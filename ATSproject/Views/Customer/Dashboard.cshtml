@@ -1,40 +1,201 @@
 ﻿@{
     ViewData["Title"] = "Dashboard";
+
+    var today = DateTime.Now.ToString("dddd, dd MMM yyyy");
+
+    var email = User.Identity?.Name ?? "";
+    var initials = "CU";
+    if (!string.IsNullOrWhiteSpace(email))
+    {
+        initials = email.Length >= 2 ? ("" + char.ToUpper(email[0]) + char.ToUpper(email[1])) : email.ToUpper();
+    }
 }
 
-<div class="container mt-4">
-    <h2>Customer Dashboard</h2>
-    <p class="text-muted">Welcome! This is the customer home page.</p>
+<style>
+    /* ── Topbar ── */
+    .page-topbar {
+        height: 64px; background: #fff;
+        border-bottom: 1px solid #e2e8f0;
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 0 2rem; margin-bottom: 2rem;
+    }
+    .page-title { font-size: 1.15rem; font-weight: 800; color: #1e2a3a; }
+    .page-right { display: flex; align-items: center; gap: 1rem; font-size: 0.82rem; color: #94a3b8; font-weight: 600; }
+    .avatar-circle {
+        width: 36px; height: 36px; border-radius: 50%;
+        background: linear-gradient(135deg, #4f8ef7, #7c3aed);
+        display: flex; align-items: center; justify-content: center;
+        color: #fff; font-weight: 800; font-size: 0.78rem; letter-spacing: 0.5px;
+    }
 
-    <div class="row g-3 mt-2">
-        <div class="col-12 col-md-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Jobs</h5>
-                    <p class="card-text">Create and manage job posts.</p>
-                    <a class="btn btn-primary" asp-controller="Jobs" asp-action="Index">Go to Jobs</a>
-                </div>
-            </div>
+    /* ── Welcome Banner ── */
+    .welcome-banner {
+        background: linear-gradient(135deg, #1e2a3a 0%, #2d3f55 100%);
+        border-radius: 20px;
+        padding: 2rem 2.2rem;
+        margin-bottom: 2rem;
+        display: flex; align-items: center; justify-content: space-between;
+        flex-wrap: wrap; gap: 1rem;
+        position: relative; overflow: hidden;
+        opacity: 0; animation: fadeUp 0.6s 0.05s ease forwards;
+    }
+    .welcome-banner::before {
+        content: ''; position: absolute;
+        top: -40px; right: -40px;
+        width: 160px; height: 160px; border-radius: 50%;
+        background: rgba(79,142,247,0.12);
+    }
+    .welcome-banner::after {
+        content: ''; position: absolute;
+        bottom: -30px; left: 30%;
+        width: 100px; height: 100px; border-radius: 50%;
+        background: rgba(255,255,255,0.04);
+    }
+    .welcome-text { z-index: 1; }
+    .welcome-greeting { font-size: 1.45rem; font-weight: 800; color: #fff; margin: 0 0 0.3rem; }
+    .welcome-sub { font-size: 0.88rem; color: rgba(255,255,255,0.6); font-weight: 600; margin: 0; }
+    .welcome-icon {
+        width: 56px; height: 56px; border-radius: 16px;
+        background: rgba(79,142,247,0.2);
+        display: flex; align-items: center; justify-content: center;
+        color: #4f8ef7; font-size: 1.7rem; z-index: 1; flex-shrink: 0;
+    }
+
+    /* ── Section label ── */
+    .section-label {
+        font-size: 0.75rem; font-weight: 700;
+        text-transform: uppercase; letter-spacing: 0.1em;
+        color: #94a3b8; margin-bottom: 1rem;
+        opacity: 0; animation: fadeDown 0.4s 0.2s ease forwards;
+    }
+
+    /* ── Nav Cards ── */
+    .nav-card {
+        border: none; border-radius: 20px; overflow: hidden;
+        cursor: pointer; position: relative;
+        transition: transform 0.3s cubic-bezier(.34,1.56,.64,1), box-shadow 0.3s;
+        text-decoration: none; display: block;
+        opacity: 0; animation: fadeUp 0.6s cubic-bezier(.34,1.56,.64,1) forwards;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.10);
+    }
+    .nav-card:hover {
+        transform: translateY(-8px) scale(1.02);
+        box-shadow: 0 18px 40px rgba(0,0,0,0.15);
+    }
+    .nav-card::before {
+        content: ''; position: absolute;
+        top: -28px; right: -28px;
+        width: 100px; height: 100px; border-radius: 50%;
+        background: rgba(255,255,255,0.12);
+    }
+    .nav-card::after {
+        content: ''; position: absolute;
+        bottom: -18px; left: -15px;
+        width: 70px; height: 70px; border-radius: 50%;
+        background: rgba(255,255,255,0.08);
+    }
+
+    .nav-card.card-jobs       { background: linear-gradient(135deg, #4f8ef7, #1a56db); }
+    .nav-card.card-candidates { background: linear-gradient(135deg, #a855f7, #7c3aed); }
+    .nav-card.card-kanban     { background: linear-gradient(135deg, #14b8a6, #0f766e); }
+
+    .nav-card:nth-child(1) { animation-delay: 0.22s; }
+    .nav-card:nth-child(2) { animation-delay: 0.30s; }
+    .nav-card:nth-child(3) { animation-delay: 0.38s; }
+
+    .nav-card-body {
+        padding: 1.8rem 1.6rem 1.5rem;
+        position: relative; z-index: 1;
+    }
+    .nav-card-icon {
+        width: 48px; height: 48px; border-radius: 14px;
+        background: rgba(255,255,255,0.18);
+        display: flex; align-items: center; justify-content: center;
+        color: #fff; font-size: 1.4rem; margin-bottom: 1rem;
+    }
+    .nav-card-title {
+        color: #fff; font-size: 1.1rem; font-weight: 800;
+        margin: 0 0 0.35rem; line-height: 1.2;
+    }
+    .nav-card-desc {
+        color: rgba(255,255,255,0.75); font-size: 0.83rem;
+        font-weight: 600; margin: 0 0 1.2rem;
+    }
+    .nav-card-cta {
+        display: inline-flex; align-items: center; gap: 0.4rem;
+        background: rgba(255,255,255,0.18);
+        color: #fff; font-size: 0.8rem; font-weight: 800;
+        padding: 0.4em 0.9em; border-radius: 20px;
+        letter-spacing: 0.04em;
+        transition: background 0.2s;
+    }
+    .nav-card:hover .nav-card-cta { background: rgba(255,255,255,0.28); }
+
+    @@keyframes fadeDown {
+        from { opacity: 0; transform: translateY(-12px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+    @@keyframes fadeUp {
+        from { opacity: 0; transform: translateY(24px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+</style>
+
+<div class="page-topbar">
+    <div class="page-title">Dashboard</div>
+    <div class="page-right">
+        <div>@today</div>
+        <div class="avatar-circle">@initials</div>
+    </div>
+</div>
+
+<div class="container pb-5">
+
+    <!-- Welcome Banner -->
+    <div class="welcome-banner">
+        <div class="welcome-text">
+            <p class="welcome-greeting">👋 Welcome back!</p>
+            <p class="welcome-sub">This is your customer home page. Manage your jobs, candidates, and pipeline below.</p>
         </div>
-
-        <div class="col-12 col-md-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Candidates</h5>
-                    <p class="card-text">View applications and candidate info.</p>
-                    <a class="btn btn-primary" asp-controller="Candidates" asp-action="Index">Go to Candidates</a>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-12 col-md-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Kanban</h5>
-                    <p class="card-text">Track candidates by stage.</p>
-                    <a class="btn btn-primary" asp-controller="Kanban" asp-action="Index">Go to Kanban</a>
-                </div>
-            </div>
+        <div class="welcome-icon">
+            <i class="bi bi-house-heart"></i>
         </div>
     </div>
+
+    <!-- Nav Cards -->
+    <div class="section-label">Quick Access</div>
+
+    <div class="row g-3">
+        <div class="col-12 col-md-4">
+            <a asp-controller="Jobs" asp-action="Index" class="nav-card card-jobs">
+                <div class="nav-card-body">
+                    <div class="nav-card-icon"><i class="bi bi-briefcase"></i></div>
+                    <h5 class="nav-card-title">Jobs</h5>
+                    <p class="nav-card-desc">Create and manage your job listings.</p>
+                    <span class="nav-card-cta">Go to Jobs <i class="bi bi-arrow-right"></i></span>
+                </div>
+            </a>
+        </div>
+        <div class="col-12 col-md-4">
+            <a asp-controller="Candidates" asp-action="Index" class="nav-card card-candidates">
+                <div class="nav-card-body">
+                    <div class="nav-card-icon"><i class="bi bi-people"></i></div>
+                    <h5 class="nav-card-title">Candidates</h5>
+                    <p class="nav-card-desc">View applications and candidate info.</p>
+                    <span class="nav-card-cta">Go to Candidates <i class="bi bi-arrow-right"></i></span>
+                </div>
+            </a>
+        </div>
+        <div class="col-12 col-md-4">
+            <a asp-controller="Kanban" asp-action="Index" class="nav-card card-kanban">
+                <div class="nav-card-body">
+                    <div class="nav-card-icon"><i class="bi bi-kanban"></i></div>
+                    <h5 class="nav-card-title">Kanban</h5>
+                    <p class="nav-card-desc">Track candidates by stage visually.</p>
+                    <span class="nav-card-cta">Go to Kanban <i class="bi bi-arrow-right"></i></span>
+                </div>
+            </a>
+        </div>
+    </div>
+
 </div>

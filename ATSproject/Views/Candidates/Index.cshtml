@@ -1,0 +1,181 @@
+﻿@model List<ATS_project.Models.Application>
+
+@{
+    ViewData["Title"] = "Candidates";
+
+    var today = DateTime.Now.ToString("dddd, dd MMM yyyy");
+
+    var email = User.Identity?.Name ?? "";
+    var initials = "CU";
+    if (!string.IsNullOrWhiteSpace(email))
+    {
+        initials = email.Length >= 2 ? ("" + char.ToUpper(email[0]) + char.ToUpper(email[1])) : email.ToUpper();
+    }
+
+    string GetInitials(string? firstName, string? lastName, string? userEmail)
+    {
+        var a = (firstName ?? "").Trim();
+        var b = (lastName ?? "").Trim();
+
+        if (!string.IsNullOrWhiteSpace(a) && !string.IsNullOrWhiteSpace(b))
+            return ("" + char.ToUpper(a[0]) + char.ToUpper(b[0]));
+
+        if (!string.IsNullOrWhiteSpace(a))
+            return a.Length >= 2 ? a.Substring(0, 2).ToUpper() : a.ToUpper();
+
+        if (!string.IsNullOrWhiteSpace(userEmail))
+        {
+            var e = userEmail.Trim();
+            return e.Length >= 2 ? ("" + char.ToUpper(e[0]) + char.ToUpper(e[1])) : e.ToUpper();
+        }
+
+        return "CA";
+    }
+
+    string StageBadgeClass(string stage) => stage switch
+    {
+        "Applied" => "badge-applied",
+        "Interview" => "badge-interview",
+        "Hired" => "badge-hired",
+        "Rejected" => "badge-rejected",
+        _ => "badge-applied"
+    };
+}
+
+<div class="page-wrap">
+    <div class="container">
+
+        <!-- Top bar -->
+        <div class="page-topbar">
+            <div class="page-title">Candidates</div>
+            <div class="page-right">
+                <div>@today</div>
+                <div class="avatar-circle">@initials</div>
+            </div>
+        </div>
+
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success alert-pill d-flex align-items-center gap-2 mb-3">
+                <i class="bi bi-check2-circle"></i>
+                <div>@TempData["Success"]</div>
+            </div>
+        }
+
+        @if (ViewBag.Message != null)
+        {
+            <div class="alert alert-warning alert-pill d-flex align-items-center gap-2 mb-3">
+                <i class="bi bi-exclamation-triangle"></i>
+                <div>@ViewBag.Message</div>
+            </div>
+        }
+
+        <!-- Header row -->
+        <div class="section-head">
+            <div class="section-left">
+                <div class="section-icon">
+                    <i class="bi bi-person-lines-fill"></i>
+                </div>
+                <div>
+                    <h2 class="section-h2">Candidates</h2>
+                    <div class="text-muted">Applications list (one row per candidate per job)</div>
+                </div>
+            </div>
+
+            <a asp-action="Create" class="btn btn-primary">
+                <i class="bi bi-plus-lg"></i>
+                <span class="ms-1">Add Candidate</span>
+            </a>
+        </div>
+
+        <!-- List card -->
+        <div class="jobs-card">
+            <div class="jobs-card-header">
+                <div class="jobs-title">
+                    <i class="bi bi-list-task"></i>
+                    <span>All Applications</span>
+                </div>
+                <div class="jobs-badge">@((Model?.Count ?? 0)) total</div>
+            </div>
+
+            @if (Model == null || Model.Count == 0)
+            {
+                <div class="p-4 text-muted">
+                    No applications yet. Click <strong>Add Candidate</strong> to add the first one.
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table mb-0">
+                        <thead class="jobs-table-head">
+                            <tr>
+                                <th style="width: 34%;">Candidate</th>
+                                <th style="width: 26%;">Job</th>
+                                <th style="width: 12%;">Stage</th>
+                                <th style="width: 18%;">Created</th>
+                                <th style="width: 10%;">LinkedIn</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var app in Model)
+                            {
+                                var c = app.Candidate;
+                                var j = app.Job;
+
+                                <tr class="job-row">
+                                    <td>
+                                        <div class="d-flex align-items-center gap-3 py-2">
+                                            <div class="candidate-badge">
+                                                @GetInitials(c?.FirstName, c?.LastName, c?.Email)
+                                            </div>
+                                            <div>
+                                                <div class="job-name">@(c?.FirstName) @(c?.LastName)</div>
+                                                <div class="text-muted small">@c?.Email</div>
+                                            </div>
+                                        </div>
+                                    </td>
+
+                                    <td class="align-middle">
+                                        <span class="date-pill">
+                                            <i class="bi bi-briefcase"></i>
+                                            @j?.Title
+                                        </span>
+                                    </td>
+
+                                    <td class="align-middle">
+                                        <span class="badge-soft @StageBadgeClass(app.Stage)">
+                                            @app.Stage
+                                        </span>
+                                    </td>
+
+                                    <td class="align-middle">
+                                        <span class="date-pill">
+                                            <i class="bi bi-calendar3"></i>
+                                            @app.CreatedAt.ToString("yyyy-MM-dd")
+                                        </span>
+                                    </td>
+
+                                    <td class="align-middle">
+                                        @if (!string.IsNullOrWhiteSpace(c?.LinkedInUrl))
+                                        {
+                                            <a class="btn btn-outline-secondary btn-sm"
+                                               href="@c.LinkedInUrl" target="_blank" title="Open LinkedIn">
+                                                <i class="bi bi-linkedin"></i>
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">-</span>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+
+    </div>
+</div>

@@ -1,0 +1,164 @@
+﻿@model ATS_project.Models.CreateApplication
+@using ATS_project.Models
+
+@{
+    ViewData["Title"] = "Add Candidate";
+    var jobs = ViewBag.Jobs as List<Job>;
+
+    var today = DateTime.Now.ToString("dddd, dd MMM yyyy");
+
+    var email = User.Identity?.Name ?? "";
+    var initials = "CU";
+    if (!string.IsNullOrWhiteSpace(email))
+    {
+        initials = email.Length >= 2 ? ("" + char.ToUpper(email[0]) + char.ToUpper(email[1])) : email.ToUpper();
+    }
+}
+
+<div class="page-wrap">
+    <div class="container">
+
+        <!-- Top bar -->
+        <div class="page-topbar">
+            <div class="page-title">Add Candidate</div>
+            <div class="page-right">
+                <div>@today</div>
+                <div class="avatar-circle">@initials</div>
+            </div>
+        </div>
+
+        <!-- Header -->
+        <div class="section-head">
+            <div class="section-left">
+                <div class="section-icon">
+                    <i class="bi bi-person-plus"></i>
+                </div>
+                <div>
+                    <h2 class="section-h2">Add Candidate</h2>
+                    <div class="text-muted">Creates candidate (if new) + application (Applied stage).</div>
+                </div>
+            </div>
+
+            <a asp-action="Index" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i>
+                <span class="ms-1">Back</span>
+            </a>
+        </div>
+
+        <!-- Form card -->
+        <div class="jobs-card">
+            <div class="jobs-card-header">
+                <div class="jobs-title">
+                    <i class="bi bi-ui-checks-grid"></i>
+                    <span>Candidate Application</span>
+                </div>
+                <div class="jobs-badge">Stage: Applied</div>
+            </div>
+
+            <div class="p-3 p-md-4">
+                <form asp-action="Create" method="post">
+                    <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+                    <div class="row g-3">
+
+                        <!-- Job -->
+                        <div class="col-12">
+                            <label class="form-label">Job</label>
+                            <select asp-for="JobId" class="form-select" required>
+                                <option value="">-- Select Job --</option>
+                                @if (jobs != null)
+                                {
+                                    foreach (var j in jobs)
+                                    {
+                                        <option value="@j.JobId">@j.Title</option>
+                                    }
+                                }
+                            </select>
+                            <span asp-validation-for="JobId" class="text-danger"></span>
+                        </div>
+
+                        <!-- First/Last -->
+                        <div class="col-12 col-lg-6">
+                            <label asp-for="FirstName" class="form-label"></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-person"></i></span>
+                                <input asp-for="FirstName" class="form-control" placeholder="First name" />
+                            </div>
+                            <span asp-validation-for="FirstName" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-12 col-lg-6">
+                            <label asp-for="LastName" class="form-label"></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-person"></i></span>
+                                <input asp-for="LastName" class="form-control" placeholder="Last name" />
+                            </div>
+                            <span asp-validation-for="LastName" class="text-danger"></span>
+                        </div>
+
+                        <!-- Email -->
+                        <div class="col-12 col-lg-6">
+                            <label asp-for="Email" class="form-label"></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                                <input asp-for="Email" class="form-control" placeholder="candidate@email.com" autocomplete="email" />
+                            </div>
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+
+                        <!-- Phone -->
+                        <div class="col-12 col-lg-6">
+                            <label asp-for="Phone" class="form-label"></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-telephone"></i></span>
+                                <input asp-for="Phone" class="form-control" placeholder="+20..." />
+                            </div>
+                            <span asp-validation-for="Phone" class="text-danger"></span>
+                        </div>
+
+                        <!-- LinkedIn -->
+                        <div class="col-12">
+                            <label asp-for="LinkedInUrl" class="form-label">LinkedIn URL</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-linkedin"></i></span>
+                                <input asp-for="LinkedInUrl" class="form-control" placeholder="https://linkedin.com/in/..." />
+                            </div>
+                            <span asp-validation-for="LinkedInUrl" class="text-danger"></span>
+                            <div class="form-text">Optional — helps you quickly review candidate profile.</div>
+                        </div>
+
+                        <!-- Notes -->
+                        <div class="col-12">
+                            <label asp-for="Notes" class="form-label"></label>
+                            <textarea asp-for="Notes" class="form-control" rows="4" placeholder="Notes about the candidate..."></textarea>
+                            <span asp-validation-for="Notes" class="text-danger"></span>
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="col-12 mt-2">
+                            <div class="row g-2">
+                                <div class="col-12 col-sm-6 col-lg-3 d-grid">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="bi bi-save"></i>
+                                        <span class="ms-1">Save</span>
+                                    </button>
+                                </div>
+                                <div class="col-12 col-sm-6 col-lg-3 d-grid">
+                                    <a asp-action="Index" class="btn btn-outline-secondary">
+                                        Cancel
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

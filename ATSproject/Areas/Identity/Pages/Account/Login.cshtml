@@ -1,0 +1,255 @@
+﻿@page
+@model LoginModel
+@{
+    ViewData["Title"] = "Log in";
+    var today = DateTime.Now.ToString("dddd, dd MMM yyyy");
+}
+
+<style>
+    .page-topbar {
+        height: 64px;
+        background: #fff;
+        border-bottom: 1px solid #e2e8f0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 2rem;
+        margin-bottom: 2.5rem;
+    }
+    .page-title {
+        font-size: 1.15rem;
+        font-weight: 800;
+        color: #1e2a3a;
+    }
+    .page-right {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        font-size: 0.82rem;
+        color: #94a3b8;
+        font-weight: 600;
+    }
+    .avatar-circle {
+        width: 36px; height: 36px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #4f8ef7, #7c3aed);
+        display: flex; align-items: center; justify-content: center;
+        color: #fff; font-weight: 800; font-size: 0.78rem;
+        letter-spacing: 0.5px;
+    }
+    .jobs-card {
+        border: none;
+        border-radius: 24px;
+        box-shadow: 0 8px 40px rgba(79,142,247,0.10), 0 2px 8px rgba(0,0,0,0.06);
+        overflow: hidden;
+        background: #fff;
+        opacity: 0;
+        animation: fadeSlideUp 0.65s 0.1s cubic-bezier(.34,1.56,.64,1) forwards;
+    }
+    .jobs-card-header {
+        background: linear-gradient(135deg, #4f8ef7 0%, #1a56db 100%);
+        padding: 1.6rem 1.8rem 1.4rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: relative;
+        overflow: hidden;
+    }
+    .jobs-card-header::before {
+        content: '';
+        position: absolute;
+        top: -30px; right: -30px;
+        width: 120px; height: 120px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.10);
+    }
+    .jobs-card-header::after {
+        content: '';
+        position: absolute;
+        bottom: -25px; left: -20px;
+        width: 90px; height: 90px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.07);
+    }
+    .jobs-title {
+        display: flex;
+        align-items: center;
+        gap: 0.7rem;
+        color: #fff;
+        font-size: 1.1rem;
+        font-weight: 800;
+        z-index: 1;
+    }
+    .jobs-title i { font-size: 1.4rem; opacity: 0.9; }
+    .jobs-badge {
+        background: rgba(255,255,255,0.2);
+        color: #fff;
+        font-size: 0.75rem;
+        font-weight: 800;
+        padding: 0.3em 0.9em;
+        border-radius: 20px;
+        letter-spacing: 0.08em;
+        z-index: 1;
+        backdrop-filter: blur(4px);
+    }
+    .card-body-pad { padding: 2rem 2rem 1.8rem; }
+    .form-label {
+        font-weight: 700;
+        font-size: 0.83rem;
+        color: #475569;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        margin-bottom: 0.45rem;
+    }
+    .input-group-text {
+        background: #f1f5f9;
+        border: 1.5px solid #e2e8f0;
+        border-right: none;
+        color: #4f8ef7;
+        font-size: 1rem;
+        padding: 0.55rem 0.85rem;
+        border-radius: 12px 0 0 12px !important;
+    }
+    .form-control {
+        border: 1.5px solid #e2e8f0;
+        border-left: none;
+        border-radius: 0 12px 12px 0 !important;
+        font-size: 0.92rem;
+        font-weight: 600;
+        color: #1e2a3a;
+        padding: 0.55rem 0.9rem;
+        background: #f8fafc;
+        transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+    }
+    .form-control:focus {
+        border-color: #4f8ef7;
+        background: #fff;
+        box-shadow: 0 0 0 3px rgba(79,142,247,0.12);
+        outline: none;
+    }
+    .input-group:focus-within .input-group-text {
+        border-color: #4f8ef7;
+        background: #eff6ff;
+        color: #1a56db;
+    }
+    .form-check-input:checked {
+        background-color: #4f8ef7;
+        border-color: #4f8ef7;
+    }
+    .form-check-label {
+        font-weight: 600;
+        font-size: 0.87rem;
+        color: #64748b;
+    }
+    .forgot-link {
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: #4f8ef7;
+        text-decoration: none;
+        transition: color 0.2s;
+    }
+    .forgot-link:hover { color: #1a56db; text-decoration: underline; }
+    .form-divider {
+        border: none;
+        border-top: 1.5px solid #f1f5f9;
+        margin: 1.5rem 0 1.4rem;
+    }
+    .btn-login {
+        background: linear-gradient(135deg, #4f8ef7, #1a56db);
+        color: #fff;
+        border: none;
+        border-radius: 12px;
+        padding: 0.7rem 1.5rem;
+        font-weight: 800;
+        font-size: 0.95rem;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        box-shadow: 0 4px 14px rgba(79,142,247,0.35);
+        transition: transform 0.2s cubic-bezier(.34,1.56,.64,1), box-shadow 0.2s ease;
+        cursor: pointer;
+    }
+    .btn-login:hover {
+        transform: translateY(-2px) scale(1.02);
+        box-shadow: 0 8px 24px rgba(79,142,247,0.45);
+        color: #fff;
+    }
+    .btn-login:active { transform: scale(0.98); }
+    .btn-login i { font-size: 1.1rem; }
+
+    @@keyframes fadeSlideUp {
+        from { opacity: 0; transform: translateY(28px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+</style>
+
+<div class="page-wrap">
+    <div class="page-topbar">
+        <div class="page-title">Log in</div>
+        <div class="page-right">
+            <div>@today</div>
+            <div class="avatar-circle">AT</div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-8 col-lg-5">
+                <div class="jobs-card">
+                    <div class="jobs-card-header">
+                        <div class="jobs-title">
+                            <i class="bi bi-shield-lock"></i>
+                            <span>Welcome back</span>
+                        </div>
+                        <div class="jobs-badge">ATS</div>
+                    </div>
+                    <div class="card-body-pad">
+                        <form id="account" method="post">
+                            <div asp-validation-summary="All" class="text-danger mb-3"></div>
+                            <div class="mb-3">
+                                <label asp-for="Input.Email" class="form-label">Email</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                                    <input asp-for="Input.Email" class="form-control" autocomplete="username" />
+                                </div>
+                                <span asp-validation-for="Input.Email" class="text-danger"></span>
+                            </div>
+                            <div class="mb-3">
+                                <label asp-for="Input.Password" class="form-label">Password</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-key"></i></span>
+                                    <input asp-for="Input.Password" class="form-control" autocomplete="current-password" />
+                                </div>
+                                <span asp-validation-for="Input.Password" class="text-danger"></span>
+                            </div>
+                            <hr class="form-divider">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" asp-for="Input.RememberMe" />
+                                    <label class="form-check-label" asp-for="Input.RememberMe">
+                                        Remember me
+                                    </label>
+                                </div>
+                               @*  <a id="forgot-password" asp-page="./ForgotPassword" class="forgot-link">
+                                    Forgot password?
+                                </a> *@
+                            </div>
+                            <div class="d-grid">
+                                <button id="login-submit" type="submit" class="btn-login">
+                                    <i class="bi bi-box-arrow-in-right"></i>
+                                    Log in
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,471 @@
+﻿@model List<ATS_project.Models.Job>
+
+@{
+    ViewData["Title"] = "Jobs";
+
+    var today = DateTime.Now.ToString("dddd, dd MMM yyyy");
+
+    var email = User.Identity?.Name ?? "";
+    var initials = "JD";
+    if (!string.IsNullOrWhiteSpace(email))
+    {
+        initials = email.Length >= 2 ? ("" + char.ToUpper(email[0]) + char.ToUpper(email[1])) : email.ToUpper();
+    }
+
+    string GetInitials(string title)
+    {
+        if (string.IsNullOrWhiteSpace(title)) return "JB";
+        var parts = title.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        if (parts.Length == 1)
+            return parts[0].Length >= 2 ? parts[0].Substring(0, 2).ToUpper() : parts[0].ToUpper();
+        return ("" + parts[0][0] + parts[1][0]).ToUpper();
+    }
+}
+
+<style>
+    /* ── Topbar ── */
+    .page-topbar {
+        height: 64px;
+        background: #fff;
+        border-bottom: 1px solid #e2e8f0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .page-title {
+        font-size: 1.15rem;
+        font-weight: 800;
+        color: #1e2a3a;
+    }
+
+    .page-right {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        font-size: 0.82rem;
+        color: #94a3b8;
+        font-weight: 600;
+    }
+
+    .avatar-circle {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #4f8ef7, #7c3aed);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-weight: 800;
+        font-size: 0.78rem;
+        letter-spacing: 0.5px;
+    }
+
+    /* ── Alert ── */
+    .alert-pill {
+        border: none;
+        border-radius: 14px;
+        background: linear-gradient(135deg, #22c55e, #15803d);
+        color: #fff;
+        font-weight: 700;
+        font-size: 0.88rem;
+        padding: 0.8rem 1.2rem;
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        opacity: 0;
+        animation: fadeDown 0.5s ease forwards;
+        margin-bottom: 1.2rem;
+    }
+
+    /* ── Section Head ── */
+    .section-head {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        opacity: 0;
+        animation: fadeDown 0.5s 0.05s ease forwards;
+    }
+
+    .section-left {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .section-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 14px;
+        background: linear-gradient(135deg, #4f8ef7, #1a56db);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-size: 1.4rem;
+        box-shadow: 0 4px 12px rgba(79,142,247,0.3);
+    }
+
+    .section-h2 {
+        font-size: 1.4rem;
+        font-weight: 800;
+        color: #1e2a3a;
+        margin: 0;
+    }
+
+    /* ── Create Button ── */
+    .btn-create {
+        background: linear-gradient(135deg, #4f8ef7, #1a56db);
+        color: #fff;
+        border: none;
+        border-radius: 12px;
+        padding: 0.55rem 1.2rem;
+        font-family: inherit;
+        font-weight: 700;
+        font-size: 0.88rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        text-decoration: none;
+        box-shadow: 0 4px 12px rgba(79,142,247,0.3);
+        transition: transform 0.2s cubic-bezier(.34,1.56,.64,1), box-shadow 0.2s;
+    }
+
+        .btn-create:hover {
+            transform: translateY(-2px) scale(1.03);
+            box-shadow: 0 8px 20px rgba(79,142,247,0.4);
+            color: #fff;
+        }
+
+    /* ── Card ── */
+    .jobs-card {
+        border: none;
+        border-radius: 20px;
+        box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+        overflow: hidden;
+        background: #fff;
+        opacity: 0;
+        animation: fadeUp 0.6s 0.15s cubic-bezier(.34,1.56,.64,1) forwards;
+    }
+
+    .jobs-card-header {
+        background: linear-gradient(135deg, #4f8ef7 0%, #1a56db 100%);
+        padding: 1.2rem 1.6rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .jobs-card-header::before {
+            content: '';
+            position: absolute;
+            top: -28px;
+            right: -28px;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.10);
+        }
+
+        .jobs-card-header::after {
+            content: '';
+            position: absolute;
+            bottom: -20px;
+            left: -15px;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.07);
+        }
+
+    .jobs-title {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        color: #fff;
+        font-size: 1rem;
+        font-weight: 800;
+        z-index: 1;
+    }
+
+        .jobs-title i {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+    .jobs-badge {
+        background: rgba(255,255,255,0.2);
+        color: #fff;
+        font-size: 0.75rem;
+        font-weight: 800;
+        padding: 0.28em 0.85em;
+        border-radius: 20px;
+        letter-spacing: 0.06em;
+        z-index: 1;
+    }
+
+    /* ── Table ── */
+    .jobs-table-head th {
+        background: #f8fafc;
+        font-size: 0.72rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: #94a3b8;
+        border: none;
+        padding: 0.85rem 1.2rem;
+    }
+
+    .job-row {
+        border-bottom: 1px solid #f1f5f9;
+        transition: background 0.15s;
+        opacity: 0;
+        animation: rowSlide 0.4s ease forwards;
+    }
+
+        .job-row:last-child {
+            border-bottom: none;
+        }
+
+        .job-row:hover {
+            background: #f8faff;
+        }
+
+        .job-row td {
+            border: none;
+            padding: 0.5rem 1.2rem;
+            vertical-align: middle;
+        }
+
+        .job-row:nth-child(1) {
+            animation-delay: 0.28s;
+        }
+
+        .job-row:nth-child(2) {
+            animation-delay: 0.34s;
+        }
+
+        .job-row:nth-child(3) {
+            animation-delay: 0.40s;
+        }
+
+        .job-row:nth-child(4) {
+            animation-delay: 0.46s;
+        }
+
+        .job-row:nth-child(5) {
+            animation-delay: 0.52s;
+        }
+
+        .job-row:nth-child(n+6) {
+            animation-delay: 0.56s;
+        }
+
+    /* ── Job Avatar ── */
+    .job-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, #4f8ef7, #1a56db);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-weight: 800;
+        font-size: 0.85rem;
+        flex-shrink: 0;
+    }
+
+    .job-name {
+        font-weight: 700;
+        color: #1e2a3a;
+        font-size: 0.92rem;
+    }
+
+    .job-desc {
+        font-size: 0.78rem;
+        color: #94a3b8;
+        font-weight: 600;
+        margin-top: 1px;
+        max-width: 520px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    /* ── Date Pill ── */
+    .date-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        background: #f1f5f9;
+        color: #64748b;
+        border-radius: 8px;
+        padding: 0.3em 0.75em;
+        font-size: 0.8rem;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+        .date-pill i {
+            color: #94a3b8;
+            flex-shrink: 0;
+        }
+
+    /* ── Empty State ── */
+    .empty-state {
+        text-align: center;
+        padding: 3.5rem 1rem;
+        color: #94a3b8;
+    }
+
+        .empty-state i {
+            font-size: 2.8rem;
+            margin-bottom: 0.8rem;
+            display: block;
+            opacity: 0.4;
+        }
+
+        .empty-state p {
+            font-size: 0.92rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+    @@keyframes fadeDown {
+        from {
+            opacity: 0;
+            transform: translateY(-12px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @@keyframes fadeUp {
+        from {
+            opacity: 0;
+            transform: translateY(24px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @@keyframes rowSlide {
+        from {
+            opacity: 0;
+            transform: translateX(-8px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+</style>
+
+<div class="page-wrap">
+    <div class="container pb-5">
+
+        <!-- Topbar -->
+        <div class="page-topbar">
+            <div class="page-title">Jobs</div>
+            <div class="page-right">
+                <div>@today</div>
+                <div class="avatar-circle">@initials</div>
+            </div>
+        </div>
+
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert-pill">
+                <i class="bi bi-check2-circle"></i>
+                @TempData["Success"]
+            </div>
+        }
+
+        <!-- Section Head -->
+        <div class="section-head">
+            <div class="section-left">
+                <div class="section-icon"><i class="bi bi-briefcase"></i></div>
+                <div>
+                    <h2 class="section-h2">Jobs</h2>
+                </div>
+            </div>
+            <a asp-action="Create" class="btn-create">
+                <i class="bi bi-plus-lg"></i> Create Job
+            </a>
+        </div>
+
+        <!-- Card -->
+        <div class="jobs-card">
+            <div class="jobs-card-header">
+                <div class="jobs-title">
+                    <i class="bi bi-list-task"></i>
+                    <span>All Jobs</span>
+                </div>
+                <div class="jobs-badge">@Model.Count total</div>
+            </div>
+
+            @if (Model == null || Model.Count == 0)
+            {
+                <div class="empty-state">
+                    <i class="bi bi-briefcase"></i>
+                    <p>No jobs yet. Click <strong>Create Job</strong> to add your first job.</p>
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table mb-0">
+                        <thead class="jobs-table-head">
+                            <tr>
+                                <th style="width:55%;">Job Title</th>
+                                <th>Created At</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var job in Model)
+                            {
+                                <tr class="job-row">
+                                    <td>
+                                        <div class="d-flex align-items-center gap-3 py-2">
+                                            <div class="job-avatar">@GetInitials(job.Title)</div>
+                                            <div>
+                                                <div class="job-name">@job.Title</div>
+                                                @if (!string.IsNullOrWhiteSpace(job.Description))
+                                                {
+                                                    <div class="job-desc">@job.Description</div>
+                                                }
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="align-middle">
+                                        <span class="date-pill">
+                                            <i class="bi bi-calendar3"></i>
+                                            @job.CreatedAt.ToString("yyyy-MM-dd HH:mm")
+                                        </span>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+
+    </div>
+</div>

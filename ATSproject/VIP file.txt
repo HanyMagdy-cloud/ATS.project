@@ -1,0 +1,22 @@
+Admin email: honamagdy2@yahoo.com
+Admin password : Ellen@2021
+
+Admin Email: jonas@devotionventures.com
+Admin password: Jonas@1234
+------------------------------
+customer user email : honamagdy4@yahoo.com
+customer user password : Test@1234
+--------------------------------------
+customer user email : ida@novapay.com
+customer user password : Ida@12345
+
+
+
+-----------------------------------
+//Azure services
+
+Azure Database name : ATS.DB
+Server name : Admin01
+Server Admin log in :ATS
+Server password : Ellen@2021
+

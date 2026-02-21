@@ -1,0 +1,580 @@
+﻿@using ATS_project.Models
+@{
+    ViewData["Title"] = "Admin Dashboard";
+
+    var accounts = ViewBag.Accounts as List<Account>;
+    var selectedAccountId = Context.Session.GetString("AdminAccountId");
+
+    var today = DateTime.Now.ToString("dddd, dd MMM yyyy");
+
+    var email = User.Identity?.Name ?? "";
+    var initials = "AD";
+    if (!string.IsNullOrWhiteSpace(email))
+    {
+        initials = email.Length >= 2 ? ("" + char.ToUpper(email[0]) + char.ToUpper(email[1])) : email.ToUpper();
+    }
+}
+
+<style>
+    /* ── Topbar ── */
+    .dashboard-topbar {
+        height: 64px;
+        background: #fff;
+        border-bottom: 1px solid #e2e8f0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .dashboard-title {
+        font-size: 1.15rem;
+        font-weight: 800;
+        color: #1e2a3a;
+        margin: 0;
+        line-height: 1.1;
+    }
+
+    .dashboard-sub {
+        font-size: 0.78rem;
+        color: #94a3b8;
+        font-weight: 600;
+        margin-top: 1px;
+    }
+
+    .dashboard-right {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        font-size: 0.82rem;
+        color: #94a3b8;
+        font-weight: 600;
+    }
+
+    .avatar-circle {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #4f8ef7, #7c3aed);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-weight: 800;
+        font-size: 0.78rem;
+        letter-spacing: 0.5px;
+    }
+
+    /* ── Company Context Card ── */
+    .context-card {
+        border: none;
+        border-radius: 20px;
+        box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+        background: #fff;
+        overflow: hidden;
+        margin-bottom: 1.8rem;
+        opacity: 0;
+        animation: fadeUp 0.5s 0.05s ease forwards;
+    }
+
+    .context-card-header {
+        background: linear-gradient(135deg, #1e2a3a 0%, #2d3f55 100%);
+        padding: 1rem 1.6rem;
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .context-card-header::before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.06);
+        }
+
+    .context-header-icon {
+        width: 30px;
+        height: 30px;
+        border-radius: 8px;
+        background: rgba(255,255,255,0.12);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-size: 0.95rem;
+        z-index: 1;
+    }
+
+    .context-header-label {
+        color: #fff;
+        font-weight: 800;
+        font-size: 0.9rem;
+        z-index: 1;
+    }
+
+    .context-body {
+        padding: 1.4rem 1.6rem;
+    }
+
+    .form-label-custom {
+        font-weight: 700;
+        font-size: 0.78rem;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+        margin-bottom: 0.4rem;
+        display: block;
+    }
+
+    .form-select-custom {
+        border: 1.5px solid #e2e8f0;
+        border-radius: 12px;
+        font-family: inherit;
+        font-weight: 600;
+        font-size: 0.88rem;
+        color: #1e2a3a;
+        padding: 0.55rem 1rem;
+        background: #f8fafc;
+        transition: border-color 0.2s, box-shadow 0.2s;
+        width: 100%;
+    }
+
+        .form-select-custom:focus {
+            border-color: #4f8ef7;
+            box-shadow: 0 0 0 3px rgba(79,142,247,0.12);
+            outline: none;
+            background: #fff;
+        }
+
+    .btn-select {
+        background: linear-gradient(135deg, #4f8ef7, #1a56db);
+        color: #fff;
+        border: none;
+        border-radius: 12px;
+        padding: 0.55rem 1.3rem;
+        font-family: inherit;
+        font-weight: 700;
+        font-size: 0.88rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        box-shadow: 0 4px 12px rgba(79,142,247,0.3);
+        transition: transform 0.2s cubic-bezier(.34,1.56,.64,1), box-shadow 0.2s;
+        cursor: pointer;
+        white-space: nowrap;
+    }
+
+        .btn-select:hover {
+            transform: translateY(-2px) scale(1.03);
+            box-shadow: 0 8px 20px rgba(79,142,247,0.4);
+            color: #fff;
+        }
+
+    .btn-clear {
+        background: #fff;
+        color: #64748b;
+        border: 1.5px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 0.55rem 1.1rem;
+        font-family: inherit;
+        font-weight: 700;
+        font-size: 0.88rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        transition: all 0.2s;
+        cursor: pointer;
+        text-decoration: none;
+        white-space: nowrap;
+    }
+
+        .btn-clear:hover {
+            background: #f1f5f9;
+            color: #1e2a3a;
+            border-color: #cbd5e1;
+        }
+
+    .btn-view {
+        background: #fff;
+        color: #4f8ef7;
+        border: 1.5px solid #4f8ef7;
+        border-radius: 12px;
+        padding: 0.55rem 1.1rem;
+        font-family: inherit;
+        font-weight: 700;
+        font-size: 0.88rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        transition: all 0.2s cubic-bezier(.34,1.56,.64,1);
+        text-decoration: none;
+        white-space: nowrap;
+    }
+
+        .btn-view:hover {
+            background: #eff6ff;
+            color: #1a56db;
+            transform: translateY(-2px) scale(1.02);
+        }
+
+    /* ── Alert ── */
+    .alert-warning-custom {
+        background: linear-gradient(135deg, #f97316, #c2410c);
+        color: #fff;
+        border: none;
+        border-radius: 14px;
+        padding: 0.9rem 1.3rem;
+        font-weight: 700;
+        font-size: 0.88rem;
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        opacity: 0;
+        animation: fadeDown 0.5s ease forwards;
+    }
+
+    /* ── Section Label ── */
+    .section-label {
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: #94a3b8;
+        margin-bottom: 1rem;
+        opacity: 0;
+        animation: fadeDown 0.4s 0.2s ease forwards;
+    }
+
+    /* ── Stat Cards ── */
+    .stat-card {
+        border: none;
+        border-radius: 20px;
+        overflow: hidden;
+        cursor: pointer;
+        position: relative;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+        transition: transform 0.3s cubic-bezier(.34,1.56,.64,1), box-shadow 0.3s;
+        opacity: 0;
+        animation: fadeUp 0.6s cubic-bezier(.34,1.56,.64,1) forwards;
+    }
+
+        .stat-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.18) !important;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: -30px;
+            right: -30px;
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.12);
+        }
+
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            bottom: -20px;
+            left: -20px;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.08);
+        }
+
+    .bg-grad-blue {
+        background: linear-gradient(135deg, #4f8ef7, #1a56db);
+    }
+
+    .bg-grad-purple {
+        background: linear-gradient(135deg, #a855f7, #7c3aed);
+    }
+
+    .bg-grad-orange {
+        background: linear-gradient(135deg, #f97316, #c2410c);
+    }
+
+    .bg-grad-teal {
+        background: linear-gradient(135deg, #14b8a6, #0f766e);
+    }
+
+    .bg-grad-green {
+        background: linear-gradient(135deg, #22c55e, #15803d);
+    }
+
+    .bg-grad-red {
+        background: linear-gradient(135deg, #ef4444, #b91c1c);
+    }
+
+    .stat-body {
+        padding: 1.6rem 1.5rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    .stat-top {
+        margin-bottom: 0.6rem;
+    }
+
+    .stat-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        background: rgba(255,255,255,0.18);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-size: 1.3rem;
+    }
+
+    .stat-label {
+        color: rgba(255,255,255,0.85);
+        font-size: 0.78rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin: 0 0 0.25rem;
+    }
+
+    .stat-value {
+        color: #fff;
+        font-size: 2.4rem;
+        font-weight: 800;
+        line-height: 1;
+        letter-spacing: -1px;
+        text-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        margin: 0;
+    }
+
+    .stat-arrow {
+        position: absolute;
+        bottom: 1.2rem;
+        right: 1.3rem;
+        color: rgba(255,255,255,0.55);
+        font-size: 1.1rem;
+        transition: transform 0.3s, color 0.3s;
+        z-index: 2;
+    }
+
+    .stat-card:hover .stat-arrow {
+        transform: translateX(4px);
+        color: #fff;
+    }
+
+    .stat-card:nth-child(1) {
+        animation-delay: 0.25s;
+    }
+
+    .stat-card:nth-child(2) {
+        animation-delay: 0.31s;
+    }
+
+    .stat-card:nth-child(3) {
+        animation-delay: 0.37s;
+    }
+
+    .stat-card:nth-child(4) {
+        animation-delay: 0.43s;
+    }
+
+    .stat-card:nth-child(5) {
+        animation-delay: 0.49s;
+    }
+
+    .stat-card:nth-child(6) {
+        animation-delay: 0.55s;
+    }
+
+    @@keyframes fadeDown {
+        from {
+            opacity: 0;
+            transform: translateY(-12px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @@keyframes fadeUp {
+        from {
+            opacity: 0;
+            transform: translateY(24px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+
+<div class="dashboard-wrap">
+    <div class="container pb-5">
+
+        <!-- Top bar -->
+        <div class="dashboard-topbar">
+            <div>
+                <div class="dashboard-title">Dashboard</div>
+                <div class="dashboard-sub">Logged in as: <strong>@User.Identity?.Name</strong></div>
+            </div>
+            <div class="dashboard-right">
+                <div>@today</div>
+                <div class="avatar-circle">@initials</div>
+            </div>
+        </div>
+
+        <!-- Company Context Card -->
+        <div class="context-card">
+            <div class="context-card-header">
+                <div class="context-header-icon"><i class="bi bi-building"></i></div>
+                <span class="context-header-label">Company Context</span>
+            </div>
+            <div class="context-body">
+                <form asp-controller="AdminContext" asp-action="Select" method="post" class="row g-3 align-items-end">
+                    @Html.AntiForgeryToken()
+
+                    <div class="col-12 col-md-5 col-lg-4">
+                        <label class="form-label-custom">Select Company</label>
+                        <select name="accountId" class="form-select-custom" required>
+                            <option value="">-- Select Company --</option>
+                            @if (accounts != null)
+                            {
+                                foreach (var a in accounts)
+                                {
+                                    var isSelected = (selectedAccountId != null && selectedAccountId == a.AccountId.ToString());
+                                    <option value="@a.AccountId" selected="@(isSelected ? "selected" : null)">@a.Name</option>
+                                }
+                            }
+                        </select>
+                    </div>
+
+                    <div class="col-auto">
+                        <button type="submit" class="btn-select">
+                            <i class="bi bi-check2"></i> Select
+                        </button>
+                    </div>
+
+                    <div class="col-auto">
+                        <a asp-controller="AdminContext" asp-action="Clear" class="btn-clear">
+                            <i class="bi bi-x"></i> Clear
+                        </a>
+                    </div>
+
+                    <div class="col-auto ms-md-auto">
+                        <a class="btn-view" asp-controller="Candidates" asp-action="Index">
+                            <i class="bi bi-people"></i> View Candidates
+                        </a>
+                    </div>
+
+                    <div class="col-auto">
+                        <a class="btn-view" asp-controller="Jobs" asp-action="Index">
+                            <i class="bi bi-briefcase"></i> View Jobs
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        @if (ViewBag.Message != null)
+        {
+            <div class="alert-warning-custom mb-3">
+                <i class="bi bi-exclamation-triangle"></i>
+                @ViewBag.Message
+            </div>
+        }
+        else
+        {
+            <div class="section-label">Overview</div>
+
+            <div class="row g-3">
+
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="stat-card bg-grad-blue">
+                        <div class="stat-body">
+                            <div class="stat-top"><div class="stat-icon"><i class="bi bi-briefcase"></i></div></div>
+                            <p class="stat-label">Jobs</p>
+                            <p class="stat-value">@ViewBag.JobsCount</p>
+                            <a asp-controller="Jobs" asp-action="Index" class="stretched-link" aria-label="Go to Jobs"></a>
+                            <div class="stat-arrow">→</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="stat-card bg-grad-purple">
+                        <div class="stat-body">
+                            <div class="stat-top"><div class="stat-icon"><i class="bi bi-file-earmark-text"></i></div></div>
+                            <p class="stat-label">Applications</p>
+                            <p class="stat-value">@ViewBag.ApplicationsCount</p>
+                            <a asp-controller="Candidates" asp-action="Index" class="stretched-link" aria-label="Go to Applications"></a>
+                            <div class="stat-arrow">→</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="stat-card bg-grad-orange">
+                        <div class="stat-body">
+                            <div class="stat-top"><div class="stat-icon"><i class="bi bi-inbox"></i></div></div>
+                            <p class="stat-label">Applied</p>
+                            <p class="stat-value">@ViewBag.AppliedCount</p>
+                            <a asp-controller="Candidates" asp-action="Index" class="stretched-link" aria-label="Go to Applied"></a>
+                            <div class="stat-arrow">→</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="stat-card bg-grad-teal">
+                        <div class="stat-body">
+                            <div class="stat-top"><div class="stat-icon"><i class="bi bi-mic"></i></div></div>
+                            <p class="stat-label">Interview</p>
+                            <p class="stat-value">@ViewBag.InterviewCount</p>
+                            <a asp-controller="Candidates" asp-action="Index" class="stretched-link" aria-label="Go to Interview"></a>
+                            <div class="stat-arrow">→</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="stat-card bg-grad-green">
+                        <div class="stat-body">
+                            <div class="stat-top"><div class="stat-icon"><i class="bi bi-check2-circle"></i></div></div>
+                            <p class="stat-label">Hired</p>
+                            <p class="stat-value">@ViewBag.HiredCount</p>
+                            <a asp-controller="Candidates" asp-action="Index" class="stretched-link" aria-label="Go to Hired"></a>
+                            <div class="stat-arrow">→</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="stat-card bg-grad-red">
+                        <div class="stat-body">
+                            <div class="stat-top"><div class="stat-icon"><i class="bi bi-x-circle"></i></div></div>
+                            <p class="stat-label">Rejected</p>
+                            <p class="stat-value">@ViewBag.RejectedCount</p>
+                            <a asp-controller="Candidates" asp-action="Index" class="stretched-link" aria-label="Go to Rejected"></a>
+                            <div class="stat-arrow">→</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        }
+
+    </div>
+</div>

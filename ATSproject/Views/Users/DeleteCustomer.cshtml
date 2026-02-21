@@ -1,0 +1,81 @@
+﻿@model ATS_project.Models.ApplicationUser
+
+@{
+    ViewData["Title"] = "Delete Customer";
+    var companyName = ViewBag.CompanyName as string ?? "-";
+
+    var today = DateTime.Now.ToString("dddd, dd MMM yyyy");
+    var email = User.Identity?.Name ?? "";
+    var initials = email.Length >= 2 ? ("" + char.ToUpper(email[0]) + char.ToUpper(email[1])) : "AD";
+}
+
+<div class="page-wrap">
+    <div class="container">
+
+        <div class="page-topbar">
+            <div class="page-title">Users</div>
+            <div class="page-right">
+                <div>@today</div>
+                <div class="avatar-circle">@initials</div>
+            </div>
+        </div>
+
+        <div class="section-head">
+            <div class="section-left">
+                <div class="section-icon">
+                    <i class="bi bi-trash"></i>
+                </div>
+                <div>
+                    <h2 class="section-h2">Delete Customer</h2>
+                    <div class="text-muted">This action cannot be undone.</div>
+                </div>
+            </div>
+
+            <a asp-action="Index" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i>
+                <span class="ms-1">Back</span>
+            </a>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-12 col-lg-7">
+                <div class="jobs-card">
+                    <div class="jobs-card-header">
+                        <div class="jobs-title">
+                            <i class="bi bi-exclamation-triangle"></i>
+                            <span>Confirm Delete</span>
+                        </div>
+                        <div class="jobs-badge">Danger</div>
+                    </div>
+
+                    <div class="p-3 p-md-4">
+                        <div class="alert alert-danger alert-pill">
+                            Are you sure you want to delete this customer user?
+                        </div>
+
+                        <div class="mb-2"><strong>Name:</strong> @Model.FullName</div>
+                        <div class="mb-2"><strong>Email:</strong> @Model.Email</div>
+                        <div class="mb-3"><strong>Company:</strong> @companyName</div>
+
+                        <form asp-action="DeleteCustomerConfirmed" asp-route-id="@Model.Id" method="post">
+                            @Html.AntiForgeryToken()
+                            <div class="row g-2">
+                                <div class="col-12 col-sm-6 d-grid">
+                                    <button type="submit" class="btn btn-danger">
+                                        <i class="bi bi-trash"></i>
+                                        <span class="ms-1">Delete</span>
+                                    </button>
+                                </div>
+                                <div class="col-12 col-sm-6 d-grid">
+                                    <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+                                </div>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

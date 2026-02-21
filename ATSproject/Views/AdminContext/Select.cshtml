@@ -1,0 +1,29 @@
+﻿@model List<ATS_project.Models.Account>
+
+@{
+    ViewData["Title"] = "Select Company";
+}
+
+<div class="container mt-4">
+    <h2>Select Company Context</h2>
+    <p class="text-muted">Choose which company you want to view as Admin.</p>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <form asp-action="Select" method="post">
+                <div class="mb-3">
+                    <label class="form-label">Company</label>
+                    <select name="accountId" class="form-select" required>
+                        <option value="">-- Select Company --</option>
+                        @foreach (var a in Model)
+                        {
+                            <option value="@a.AccountId">@a.Name</option>
+                        }
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Select</button>
+            </form>
+        </div>
+    </div>
+</div>

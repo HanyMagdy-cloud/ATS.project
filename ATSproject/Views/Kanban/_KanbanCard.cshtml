@@ -1,0 +1,63 @@
+﻿@model ATS_project.Models.Application
+
+@{
+    var c = Model.Candidate;
+    var j = Model.Job;
+
+    string badgeClass = Model.Stage switch
+    {
+        "Applied" => "badge-applied",
+        "Interview" => "badge-interview",
+        "Hired" => "badge-hired",
+        "Rejected" => "badge-rejected",
+        _ => "badge-applied"
+    };
+
+    // Keep filters when posting stage update
+    var jobId = Context.Request.Query["jobId"].ToString();
+    var q = Context.Request.Query["q"].ToString();
+}
+
+<div class="card kanban-card mb-2">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-start gap-2">
+            <div>
+                <div class="fw-bold">
+                    @(c?.FirstName) @(c?.LastName)
+                </div>
+                <div class="kanban-meta">@c?.Email</div>
+            </div>
+
+            <span class="badge-soft @badgeClass">@Model.Stage</span>
+        </div>
+
+        <div class="mt-2 kanban-meta">
+            <i class="bi bi-briefcase"></i>
+            <span class="ms-1">@j?.Title</span>
+        </div>
+
+        <div class="mt-3">
+            <form asp-controller="Kanban" asp-action="UpdateStage" method="post" class="d-flex gap-2 align-items-center">
+                @Html.AntiForgeryToken()
+
+                <input type="hidden" name="applicationId" value="@Model.ApplicationId" />
+                <input type="hidden" name="jobId" value="@jobId" />
+                <input type="hidden" name="q" value="@q" />
+
+                <select name="stage" class="form-select form-select-sm" onchange="this.form.submit()">
+                    <option value="Applied" selected="@(Model.Stage == "Applied" ? "selected" : null)">Applied</option>
+                    <option value="Interview" selected="@(Model.Stage == "Interview" ? "selected" : null)">Interview</option>
+                    <option value="Hired" selected="@(Model.Stage == "Hired" ? "selected" : null)">Hired</option>
+                    <option value="Rejected" selected="@(Model.Stage == "Rejected" ? "selected" : null)">Rejected</option>
+                </select>
+
+                @if (!string.IsNullOrWhiteSpace(c?.LinkedInUrl))
+                {
+                    <a class="btn btn-outline-secondary btn-sm" href="@c.LinkedInUrl" target="_blank" title="LinkedIn">
+                        <i class="bi bi-linkedin"></i>
+                    </a>
+                }
+            </form>
+        </div>
+    </div>
+</div>

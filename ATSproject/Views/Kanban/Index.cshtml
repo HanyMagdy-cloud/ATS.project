@@ -1,0 +1,178 @@
+﻿@model List<ATS_project.Models.Application>
+@using ATS_project.Models
+
+@{
+    ViewData["Title"] = "Kanban";
+    var jobs = ViewBag.Jobs as List<Job>;
+    Guid? selectedJobId = ViewBag.SelectedJobId as Guid?;
+    string q = ViewBag.Query as string ?? "";
+
+    // group by stages
+    var applied = Model.Where(a => a.Stage == "Applied").ToList();
+    var interview = Model.Where(a => a.Stage == "Interview").ToList();
+    var hired = Model.Where(a => a.Stage == "Hired").ToList();
+    var rejected = Model.Where(a => a.Stage == "Rejected").ToList();
+}
+
+<div class="kanban-wrap">
+    <div class="container">
+
+        <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2 mb-3">
+            <div>
+                <h2 class="mb-0">Kanban</h2>
+                <div class="text-muted">Track applications by stage.</div>
+            </div>
+        </div>
+
+        @if (ViewBag.Message != null)
+        {
+            <div class="alert alert-warning">
+                @ViewBag.Message
+                @if (User.IsInRole("Admin"))
+                {
+                    <div class="mt-2">
+                        <a class="btn btn-primary btn-sm" asp-controller="AdminContext" asp-action="Select">
+                            Select Company Context
+                        </a>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <!-- Toolbar (filters) -->
+            <div class="kanban-toolbar mb-3">
+                <form method="get" class="row g-2 align-items-end">
+                    <div class="col-12 col-md-5 col-lg-4">
+                        <label class="form-label mb-1">Job</label>
+                        <select class="form-select" name="jobId">
+                            <option value="">All Jobs</option>
+                            @if (jobs != null)
+                            {
+                                foreach (var j in jobs)
+                                {
+                                    var sel = (ViewBag.SelectedJobId != null && ((Guid)ViewBag.SelectedJobId) == j.JobId);
+                                    <option value="@j.JobId" selected="@(sel ? "selected" : null)">@j.Title</option>
+                                }
+                            }
+                        </select>
+                    </div>
+
+                    <div class="col-12 col-md-5 col-lg-4">
+                        <label class="form-label mb-1">Candidate search</label>
+                        <input class="form-control" name="q" value="@q" placeholder="Name or email..." />
+                    </div>
+
+                    <div class="col-12 col-md-2 col-lg-2 d-grid">
+                        <button class="btn btn-primary" type="submit">
+                            <i class="bi bi-search"></i> Filter
+                        </button>
+                    </div>
+
+                    <div class="col-12 col-lg-2 d-grid">
+                        <a class="btn btn-outline-secondary" asp-controller="Kanban" asp-action="Index">
+                            Clear
+                        </a>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Columns -->
+            <div class="row g-3">
+
+                @* Applied *@
+                <div class="col-12 col-md-6 col-lg-3">
+                    <div class="kanban-col kanban-applied">
+                        <div class="kanban-col-title">
+                            <div class="label">
+                                <i class="bi bi-inbox"></i>
+                                <span>Applied</span>
+                            </div>
+                            <span class="kanban-count">@applied.Count</span>
+                        </div>
+
+                        @foreach (var a in applied)
+                        {
+                            <partial name="_KanbanCard" model="a" />
+                        }
+
+                        @if (!applied.Any())
+                        {
+                            <div class="text-muted small">No items</div>
+                        }
+                    </div>
+                </div>
+
+                @* Interview *@
+                <div class="col-12 col-md-6 col-lg-3">
+                    <div class="kanban-col kanban-interview">
+                        <div class="kanban-col-title">
+                            <div class="label">
+                                <i class="bi bi-mic"></i>
+                                <span>Interview</span>
+                            </div>
+                            <span class="kanban-count">@interview.Count</span>
+                        </div>
+
+                        @foreach (var a in interview)
+                        {
+                            <partial name="_KanbanCard" model="a" />
+                        }
+
+                        @if (!interview.Any())
+                        {
+                            <div class="text-muted small">No items</div>
+                        }
+                    </div>
+                </div>
+
+                @* Hired *@
+                <div class="col-12 col-md-6 col-lg-3">
+                    <div class="kanban-col kanban-hired">
+                        <div class="kanban-col-title">
+                            <div class="label">
+                                <i class="bi bi-check2-circle"></i>
+                                <span>Hired</span>
+                            </div>
+                            <span class="kanban-count">@hired.Count</span>
+                        </div>
+
+                        @foreach (var a in hired)
+                        {
+                            <partial name="_KanbanCard" model="a" />
+                        }
+
+                        @if (!hired.Any())
+                        {
+                            <div class="text-muted small">No items</div>
+                        }
+                    </div>
+                </div>
+
+                @* Rejected *@
+                <div class="col-12 col-md-6 col-lg-3">
+                    <div class="kanban-col kanban-rejected">
+                        <div class="kanban-col-title">
+                            <div class="label">
+                                <i class="bi bi-x-circle"></i>
+                                <span>Rejected</span>
+                            </div>
+                            <span class="kanban-count">@rejected.Count</span>
+                        </div>
+
+                        @foreach (var a in rejected)
+                        {
+                            <partial name="_KanbanCard" model="a" />
+                        }
+
+                        @if (!rejected.Any())
+                        {
+                            <div class="text-muted small">No items</div>
+                        }
+                    </div>
+                </div>
+
+            </div>
+        }
+    </div>
+</div>
